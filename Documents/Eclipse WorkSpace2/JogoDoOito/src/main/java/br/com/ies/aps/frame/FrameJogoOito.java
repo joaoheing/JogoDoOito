@@ -1,7 +1,6 @@
 package br.com.ies.aps.frame;
 
 import java.awt.Color;
-import java.awt.Dialog.ModalExclusionType;
 import java.awt.Font;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,9 +28,8 @@ public class FrameJogoOito extends JFrame {
 		setTitle("Jogo Oito");
 		setForeground(Color.BLUE);
 		setBackground(Color.BLUE);
-		setAlwaysOnTop(true);
+		setAlwaysOnTop(false);
 		setResizable(false);
-		setModalExclusionType(ModalExclusionType.APPLICATION_EXCLUDE);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 700, 405);
 		conteudoPainelJogo = new JPanel();
@@ -107,7 +105,7 @@ public class FrameJogoOito extends JFrame {
 		painel9.setEnabled(false);
 		painel9.setBounds(474, 258, 220, 118);
 		panelJogoOito.add(painel9);
-		
+
 
 		mapPanel.put(0, painel1);
 		mapPanel.put(1, painel2);
@@ -121,14 +119,14 @@ public class FrameJogoOito extends JFrame {
 
 	}
 
-	public void alterarCampos(Jogo jogo) {
+	public void alteraCampos(Jogo jogo) {
 		int index = 0;
 
 		for (int l = 0; l < Constants.TAMANHO_MATRIZ_JOGO; l++) {
 			for (int c = 0; c < Constants.TAMANHO_MATRIZ_JOGO; c++) {
-				mapPanel.get(index).setText(Integer.toString(jogo.retornaValor(new Casa.Builder()
-						.withLinha(l)	
-						.withColuna(c).build())));
+				Integer valor = jogo.retornaValor(new Casa(l, c));
+
+				mapPanel.get(index).setText(valor == 0 ? new String() : Integer.toString(valor));
 
 				index++;
 			}

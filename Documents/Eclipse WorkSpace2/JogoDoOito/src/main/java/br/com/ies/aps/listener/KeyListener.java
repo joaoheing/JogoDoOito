@@ -30,16 +30,16 @@ public class KeyListener implements java.awt.event.KeyListener {
 		switch(teclaApertada) {
 
 		case 37:
-			gameManager.mover(DirecaoType.ESQUERDA);
+			gameManager.move(DirecaoType.ESQUERDA);
 			break;
 		case 38:
-			gameManager.mover(DirecaoType.CIMA);
+			gameManager.move(DirecaoType.CIMA);
 			break;
 		case 39:
-			gameManager.mover(DirecaoType.DIREITA);
+			gameManager.move(DirecaoType.DIREITA);
 			break;
 		case 40:
-			gameManager.mover(DirecaoType.BAIXO);
+			gameManager.move(DirecaoType.BAIXO);
 			break;
 		}
 		

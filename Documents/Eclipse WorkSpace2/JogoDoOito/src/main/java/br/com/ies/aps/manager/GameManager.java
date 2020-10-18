@@ -6,6 +6,8 @@ import java.util.NoSuchElementException;
 import java.util.Random;
 import java.util.stream.IntStream;
 
+import javax.swing.JOptionPane;
+
 import br.com.ies.aps.frame.FrameJogoOito;
 import br.com.ies.aps.model.Casa;
 import br.com.ies.aps.model.Jogo;
@@ -15,15 +17,17 @@ import br.com.ies.aps.util.Constants;
 public class GameManager {
 
 	private FrameJogoOito frameJogoOito;
+	private GameDaoManager gameDaoManager;
 	
 	private Jogo jogo;
 
 	public GameManager(FrameJogoOito frameJogoOito) {
 		this.frameJogoOito = frameJogoOito;
+		this.gameDaoManager = new GameDaoManager();
 		jogo = new Jogo();
 	}
 
-	public void embaralharCasas() {
+	public void embaralhaCasas() {
 		List<Integer> listaCasas = new LinkedList<Integer>();
 		
 		IntStream
@@ -34,49 +38,48 @@ public class GameManager {
 			for(int y = 0; y < Constants.TAMANHO_MATRIZ_JOGO; y++) {
 
 				Integer numeroRandomico = listaCasas.get(new Random().nextInt(listaCasas.size()));
-				jogo.adicionaCasa(numeroRandomico, new Casa.Builder()
-						.withLinha(x)
-						.withColuna(y)
-						.build());
+				jogo.adicionaCasa(numeroRandomico, new Casa(x, y));
 				listaCasas.remove(numeroRandomico);
 				
 			}
 		}
 		
-		frameJogoOito.alterarCampos(jogo);
+		frameJogoOito.alteraCampos(jogo);
 
 	}
 
-	public void mover(DirecaoType direcao) {
+	public void move(DirecaoType direcao) {
 		try {
 			Casa casaZero = jogo.retornaCasa(0);
 
-			jogo.retornaCasa(new Casa.Builder()
-					.withLinha(casaZero.getLinha() - (direcao.getLinha() * - 1))	
-					.withColuna(casaZero.getColuna() - (direcao.getColuna() * - 1))
-					.build())
+			jogo.retornaCasa(new Casa(casaZero.getLinha() - (direcao.getLinha() * - 1), casaZero.getColuna() - (direcao.getColuna() * - 1) ))
 							.setLinha(casaZero.getLinha())
 							.setColuna(casaZero.getColuna());
 
 			casaZero.setLinha(casaZero.getLinha() + direcao.getLinha())
 					.setColuna(casaZero.getColuna() + direcao.getColuna());
 
-			frameJogoOito.alterarCampos(jogo);
+			Boolean fimJogo = verificaFimJogo();
+			
+			frameJogoOito.alteraCampos(jogo);
+			gameDaoManager.salvaJogada(jogo, fimJogo);
+			
+			if(fimJogo) {
+				JOptionPane.showMessageDialog(null, "Você venceu o jogo!");
+				embaralhaCasas();
+			}
 			
 		}catch(NoSuchElementException e) {
 		}
 	}
 	
-	public boolean verificarFimJogo() {
+	public boolean verificaFimJogo() {
 		int index = 0;
 		
 		for(int l = 0; l < Constants.TAMANHO_MATRIZ_JOGO; l++) {
 			for(int c = 0; c < Constants.TAMANHO_MATRIZ_JOGO; c++) {
 				
-				if (jogo.retornaValor(new Casa.Builder()
-						.withLinha(l)	
-						.withColuna(c)
-						.build())  != index) return false;
+				if (jogo.retornaValor(new Casa(l, c))  != index) return false;
 				
 				index++;
 			}
